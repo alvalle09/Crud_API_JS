@@ -1,6 +1,20 @@
 
 document.getElementById("load").onclick = function() {
-  axios.get('/api/products').then(addList);
+  const value = document.getElementById('product-id').value;
+  if (value === "") {
+    axios.get('/api/products').then(addList);
+  }
+  else {
+    axios
+      .get(`api/products/${value}`)
+      .then(addSingle)
+      .catch((error) => {
+        if (error.response.status === 404) {
+          notFound();
+        }
+      })
+  }
+  
 }
 
 function addList({ data }) {

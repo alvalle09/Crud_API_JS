@@ -12,7 +12,7 @@ module.exports = function (db) {
   })
 
   router.patch("/products/:id", (req, res) => {
-    res.send(db.get("products").find({id: req.params.id}).assign(req.body).write());
+   db.get("products").find({id: req.params.id}).assign(req.body).write();
   });
 
   router.route('/products/:id')
@@ -21,11 +21,15 @@ module.exports = function (db) {
     res.status(204).send();
   })
   .get((req, res) => {
-    res.send(
-      db.get("products").find({id: req.params.id}).value()
-    );
+    const result = db.get("products").find({id: req.params.id}).value();
+    if (result) {
+      res.send(result);
+    }
+    else {
+      res.status(404).send();
+    }
   });
-  
+
   return router;
 };
 

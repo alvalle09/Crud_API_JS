@@ -9,7 +9,8 @@ document.getElementById('submit').onclick = (evt) => {
     quantity: formData.get('quantity'),
     description: formData.get('description'),
     color: formData.get('color'), 
-  });
+  })
+  .then(processResults);
 };
 
 function processResults({ data }) {

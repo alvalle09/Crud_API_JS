@@ -19,13 +19,14 @@ document.getElementById("submit").onclick = (evt) => {
     color: formData.get("color"),
     description: formData.get("description"), 
   };
-  
+
   const updateFields = _.omitBy(newData, function(v, k) {
     return k === "id" || currentProduct[k] == v;
   });
 
   axios.patch(`/api/products/${currentProduct.id}`, updateFields)
-    .then(processResults);
+    .then(({ data }) => console.log(data));
+    //.then(processResults);
 };
 
 function loadProduct(data) {

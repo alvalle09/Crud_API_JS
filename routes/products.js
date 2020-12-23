@@ -2,20 +2,31 @@ var express = require("express");
 var router = express.Router();
 
 module.exports = function (db) {
-  router.route("/products")
-    .get((req, res) => {
+  router
+  .route("/products")
+  .get((req, res) => {
     res.send(db.get("products").value());
   })
   .post((req, res) => {
     const newProduct = req.body;
     res.send(db.get("products").insert(newProduct).write());
-  })
-
-  router.patch("/products/:id", (req, res) => {
-   db.get("products").find({id: req.params.id}).assign(req.body).write();
   });
 
-  router.route('/products/:id')
+ router
+  .route('/products/search').get((req, res) => {
+    const keywords = req.query.keywords;
+    const result = db.get("products").filter((_) => {
+      const fullText = _.description + _.name + _.color;
+      return fullText.indexOf(keywords) !== -1;
+    });
+
+   res.send(result); 
+  });
+
+  
+
+  router
+  .route('/products/:id')
   .delete((req, res) => {
     db.get("products").remove({id: req.params.id}).write();
     res.status(204).send();
@@ -28,8 +39,11 @@ module.exports = function (db) {
     else {
       res.status(404).send();
     }
+  })
+  .patch((req, res) => {
+      db.get("products").find({id: req.params.id}).assign(req.body).write();
   });
-
+  
   return router;
 };
 

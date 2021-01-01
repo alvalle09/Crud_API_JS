@@ -12,19 +12,18 @@ module.exports = function (db) {
     res.send(db.get("products").insert(newProduct).write());
   });
 
- router
-  .route('/products/search').get((req, res) => {
-    const keywords = req.query.keywords;
+  router.route("/products/search").get((req, res) => {
+    const keywords = req.query.keywords.split(" ");
+    console.log(keywords);
     const result = db.get("products").filter((_) => {
       const fullText = _.description + _.name + _.color;
-      return fullText.indexOf(keywords) !== -1;
+
+      return keywords.every((_) => fullText.indexOf(_) !== -1);
     });
 
-   res.send(result); 
+    res.send(result);
   });
-
   
-
   router
   .route('/products/:id')
   .delete((req, res) => {

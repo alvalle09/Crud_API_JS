@@ -31,9 +31,20 @@ module.exports = function (db) {
     const results = db.get("products").filter(_ => {
       return Object.keys(query).reduce((found, key) => {
         const obj = query[key];
-        found = found && _[key] == obj.value;
+
+        switch (obj.op) {
+          case "lt":
+            found = found && _[key] < obj.value;
+            break;
+          case "eq":
+            found = found && _[key] == obj.value;
+            break;
+          default: 
+            found = found && _[key].indexOf(obj.value) !== -1;
+            break;
+        }
         return found;
-      }, true)
+      }, true);
     });
     res.send(results);
   });

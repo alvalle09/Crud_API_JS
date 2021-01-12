@@ -13,7 +13,7 @@ module.exports = function (db) {
 
     const errors = [];
 
-    if(!newProduct.na) {
+    if(!newProduct.name) {
       errors.push({
         field: "name",
         error: "required",
@@ -21,11 +21,46 @@ module.exports = function (db) {
       })
     }    
 
+    if (newProduct.price && isNaN(Number(newProduct.price))) {
+      errors.push({
+        field: "price",
+        error: "type",
+        message: "Price must be a number"
+      })
+    }
+
+    if (newProduct.name > 25) {
+      errors.push({
+        field: "name",
+        error: "length",
+        message: "Name cannot be greater than 25 characters"
+      })
+    }
+
     if (errors.length) {
       res.status(422).send(errors);
     }
     else {
       res.send(db.get("products").insert(newProduct).write());
+    }
+
+    const allowedColors = [
+      "red",
+      "blue",
+      "orange",
+      "black",
+      "brown",
+      "",
+      null, 
+      undefined
+    ]
+
+    if (!allowedColors.some((_) => _ === newProduct.color)) {
+      errors.push({
+        field: "color",
+        error: "allowedValue",
+        message: "must be one of the following colors: red, blue, oran...."
+      })
     }
   
   });

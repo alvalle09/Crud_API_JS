@@ -10,7 +10,24 @@ module.exports = function (db) {
   })
   .post((req, res) => {
     const newProduct = req.body;
-    res.send(db.get("products").insert(newProduct).write());
+
+    const errors = [];
+
+    if(!newProduct.na) {
+      errors.push({
+        field: "name",
+        error: "required",
+        message: "Name is required"
+      })
+    }    
+
+    if (errors.length) {
+      res.status(422).send(errors);
+    }
+    else {
+      res.send(db.get("products").insert(newProduct).write());
+    }
+  
   });
 
   router.route("/products/search").get((req, res) => {
